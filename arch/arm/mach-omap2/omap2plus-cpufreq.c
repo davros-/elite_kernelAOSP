@@ -67,6 +67,8 @@ static unsigned int screen_off_max_freq;
 static bool omap_cpufreq_ready;
 static bool omap_cpufreq_suspended;
 
+static int oc_val;
+
 static unsigned int omap_getspeed(unsigned int cpu)
 {
 	unsigned long rate;
@@ -425,15 +427,6 @@ struct freq_attr omap_cpufreq_attr_screen_off_freq = {
 	.store = store_screen_off_freq,
 };
 
-#if defined(CONFIG_OMAP_SCALING_FREQS)
-static struct freq_attr *omap_cpufreq_attr[] = {
-#ifdef CONFIG_OMAP_SCALING_FREQS
-          &cpufreq_freq_attr_scaling_available_freqs,
-#endif
-          &omap_cpufreq_attr_screen_off_freq,
-NULL,
-};
-#endif
 
 /*
  * Variable GPU OC - sysfs interface for cycling through different GPU top speeds
@@ -477,12 +470,16 @@ static struct freq_attr gpu_oc = {
 	.store = store_gpu_oc,
 };
 
-
+#if defined(CONFIG_OMAP_SCALING_FREQS)
 static struct freq_attr *omap_cpufreq_attr[] = {
+#ifdef CONFIG_OMAP_SCALING_FREQS
 	&cpufreq_freq_attr_scaling_available_freqs,
+#endif
 	&omap_cpufreq_attr_screen_off_freq,
+	&gpu_oc,
 	NULL,
 };
+#endif
 
 static struct cpufreq_driver omap_driver = {
 	.flags		= CPUFREQ_STICKY,
@@ -533,6 +530,8 @@ static struct platform_device omap_cpufreq_device = {
 static int __init omap_cpufreq_init(void)
 {
 	int ret;
+
+	oc_val = 0;
 
 	if (cpu_is_omap24xx())
 		mpu_clk_name = "virt_prcm_set";
