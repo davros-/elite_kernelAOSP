@@ -19,13 +19,6 @@
 #include <linux/delay.h>
 #include <trace/events/asoc.h>
 
-#ifdef CONFIG_SWITCH
-/* Android jack detection */
-struct switch_dev android_switch = {
-	.name = "h2w",
-};
-#endif
-
 /**
  * snd_soc_jack_new - Create a new jack
  * @card:  ASoC card
