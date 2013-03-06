@@ -956,9 +956,13 @@ void soundcontrol_reportjack(int jack_type)
 {
     if (jack_type == 0) {
 	headset_plugged = false;
+	
+    if (snd_codec != NULL)
 	headset_power_mode(snd_codec, 1);
     } else { 
 	headset_plugged = true;
+	
+    if (snd_codec != NULL && snd_data != NULL)
 	headset_power_mode(snd_codec, snd_data->headset_mode);
     }
 
